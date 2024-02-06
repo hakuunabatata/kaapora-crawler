@@ -1,0 +1,19 @@
+{
+  "name": "kaapora",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "puppeteer": "^22.0.0",
+    "puppeteer-core": "^22.0.0"
+  }
+}
