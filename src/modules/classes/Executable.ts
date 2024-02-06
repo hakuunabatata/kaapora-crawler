@@ -5,11 +5,9 @@ import { Browser } from './Browser'
 export class Executable {
   #page?: Page
   #browser?: Browser
+  index = 0
   waitUntil: WaitFor
-  results: Record<'html' | 'json', Record<string, Buffer[]>> = {
-    html: {},
-    json: {},
-  }
+  results: Record<string, Buffer> = {}
 
   public getPage = async () => {
     if (!this.#browser) this.#browser = new Browser()
@@ -18,11 +16,17 @@ export class Executable {
   }
 
   public addResult = (type: 'html' | 'json', key: string, content: string) => {
-    const prevInfo = this.results[type] ?? {}
-    this.results[type] = {
-      ...prevInfo,
-      [key]: [...prevInfo[key], Buffer.from(content, 'base64')],
+    this.results = {
+      ...this.results,
+      [`${key}-${this.index}.${type}`]: Buffer.from(content),
     }
+    return this
+  }
+
+  public closeBrowser = async () => {
+    if (this.#browser) await this.#browser.close()
+    this.#page = undefined
+    this.#browser = undefined
     return this
   }
 }

@@ -43,7 +43,6 @@ export class Browser {
   }
 
   public async open() {
-    console.log('Create new Browser')
     this.#instance = this.#configs.remote
       ? await this.connect()
       : await this.launch()
@@ -55,7 +54,6 @@ export class Browser {
   }
 
   private async launch() {
-    console.log('launch')
     const { path, headless, viewportHeight, viewportWidth } = this.#configs
     if (!path) throw new Error('missing BROWSER_PATH')
     return puppeteerExtra.launch({
@@ -81,18 +79,17 @@ export class Browser {
   }
 
   public async close() {
+    if (this.#page && !this.#page.isClosed) await this.#page.close()
     if (this.#instance) await this.#instance.close()
   }
 
   public async newPage() {
-    console.log('Create new Page')
     const instance = await this.getInstance()
     this.#page = await instance.newPage()
     return this.#page
   }
 
   public async getPage() {
-    console.log('page')
     return this.#page ?? this.newPage()
   }
 }

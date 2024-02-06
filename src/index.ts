@@ -15,7 +15,9 @@ const execute = async () => {
 
   const executor = new Executor(tasks)
 
-  await executor.execute()
+  const result = await executor.execute()
+
+  return result
 }
 
-execute().then(console.log).catch(console.error)
+execute()

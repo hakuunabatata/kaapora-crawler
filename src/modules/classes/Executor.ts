@@ -1,18 +1,36 @@
 import { getExecutor } from '../tasks'
 import { Task } from '../types/tasks'
 import { Executable } from './Executable'
+import { Repository } from './Repository'
 
 export class Executor {
-  #executable: Executable
+  private executable: Executable
 
-  constructor(private tasks: Task[]) {
-    this.#executable = new Executable()
+  constructor(
+    private tasks: Task[],
+    private exportFiles = false,
+    private repository?: Repository,
+  ) {
+    this.executable = new Executable()
   }
 
   async execute() {
     for (const task of this.tasks) {
-      const executor = await getExecutor(task).prepare(this.#executable)
+      const executor = await getExecutor(task).prepare(this.executable)
       await executor._execute()
+    }
+
+    console.log(this.exportFiles)
+
+    if (this.exportFiles) await this.export()
+
+    return this.executable.closeBrowser()
+  }
+
+  private async export() {
+    for (const [key, content] of Object.entries(this.executable.results)) {
+      console.log(key)
+      if (this.repository) await this.repository.write(content, key)
     }
   }
 }

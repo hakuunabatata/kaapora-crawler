@@ -7,7 +7,7 @@ export abstract class TaskExecutor {
   executable: Executable
 
   constructor(
-    private wait: WaitEvent = 'networkidle0',
+    private wait?: WaitEvent,
     private isNavigation?: boolean,
   ) {}
 
@@ -21,6 +21,8 @@ export abstract class TaskExecutor {
   }
 
   public async _execute() {
+    console.log(this.constructor.name)
+
     const executable = await this.execute()
     if (this.wait) await this.waitFor(this.wait)
     if (this.isNavigation)

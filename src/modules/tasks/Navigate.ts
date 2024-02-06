@@ -12,7 +12,9 @@ export class NavigateTask extends TaskExecutor {
   }
 
   public async execute() {
-    await this.page.goto(this.url, { waitUntil: this.waitUntil })
+    await this.page.goto(this.url, {
+      waitUntil: this.waitUntil,
+    })
 
     return this.executable
   }
