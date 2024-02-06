@@ -1,4 +1,4 @@
-import { Browser as BrowserInstance } from 'puppeteer'
+import { Browser as BrowserInstance, Page } from 'puppeteer'
 
 import { Environment } from '../configs'
 import puppeteerExtra from 'puppeteer-extra'
@@ -16,8 +16,9 @@ const {
 } = Environment
 
 export class Browser {
-  private instance: BrowserInstance
-  private configs: BrowserConfig
+  #instance: BrowserInstance
+  #configs: BrowserConfig
+  #page: Page
 
   constructor({
     headless,
@@ -29,7 +30,7 @@ export class Browser {
     viewportHeight,
     viewportWidth,
   }: Partial<BrowserConfig> = {}) {
-    this.configs = {
+    this.#configs = {
       headless: headless ?? BROWSER_HEADLESS,
       host: host ?? BROWSER_HOST,
       path: path ?? BROWSER_PATH,
@@ -41,15 +42,19 @@ export class Browser {
     }
   }
 
-  public async getInstance() {
-    if (this.configs.remote) this.instance = await this.connect()
-    else this.instance = await this.launch()
+  public async open() {
+    this.#instance = this.#configs.remote
+      ? await this.connect()
+      : await this.launch()
+    return this.#instance
+  }
 
-    return this.instance
+  public async getInstance() {
+    return this.#instance ?? this.open()
   }
 
   private async launch() {
-    const { path, headless, viewportHeight, viewportWidth } = this.configs
+    const { path, headless, viewportHeight, viewportWidth } = this.#configs
     if (!path) throw new Error('missing BROWSER_PATH')
     return puppeteerExtra.launch({
       headless,
@@ -64,12 +69,26 @@ export class Browser {
   }
 
   private async connect() {
-    const { host, port, token } = this.configs
+    const { host, port, token } = this.#configs
     if (!host) throw new Error('Missing BROWSER_HOST')
     if (!port) throw new Error('Missing BROWSER_PORT')
     return puppeteerExtra.connect({
       browserWSEndpoint: `ws://${host}:${port}?token=${token}`,
       ignoreHTTPSErrors: true,
     })
+  }
+
+  public async close() {
+    if (this.#instance) await this.#instance.close()
+  }
+
+  public async newPage() {
+    const instance = await this.getInstance()
+    this.#page = await instance.newPage()
+    return this.#page
+  }
+
+  public async getPage() {
+    return this.#page ?? this.newPage()
   }
 }

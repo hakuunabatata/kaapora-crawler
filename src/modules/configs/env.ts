@@ -12,4 +12,6 @@ const envSchema = zod.object({
   BROWSER_VIEWPORT_WIDTH: zod.coerce.number().default(500),
 })
 
+export type EnvironmentSchema = zod.infer<typeof envSchema>
+
 export const Environment = envSchema.parse(process.env)
