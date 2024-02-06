@@ -1,6 +1,10 @@
 {
-  "extends": "@rocketseat/eslint-config/node",
+  "extends": [
+    "@rocketseat/eslint-config/node",
+    "prettier"
+  ],
   "rules": {
-    "linebreak-style": "off"
+    "no-useless-constructor": "off",
+    "comma-dangle": "off"
   }
 }

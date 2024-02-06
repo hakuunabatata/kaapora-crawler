@@ -1,12 +1,18 @@
+import { PuppeteerLifeCycleEvent } from 'puppeteer'
+
 export enum TaskType {
   CLICK = 'CLICK',
   NAVIGATE = 'NAVIGATE',
   SAVE = 'SAVE',
 }
 
+export type WaitFor = PuppeteerLifeCycleEvent
+export type WaitEvent = WaitFor | number
+
 interface BaseTask {
   type: TaskType
-  wait?: number
+  wait?: WaitFor | number
+  isNavigation?: boolean
 }
 
 interface ElementTask extends BaseTask {
@@ -25,4 +31,10 @@ interface ExportBrowserTask extends ExportTask {
   type: TaskType.SAVE
 }
 
-export type Task = ClickTask | ExportBrowserTask
+interface NavigateTask extends BaseTask {
+  type: TaskType.NAVIGATE
+  url: string
+  waitUntil?: WaitFor
+}
+
+export type Task = ClickTask | ExportBrowserTask | NavigateTask

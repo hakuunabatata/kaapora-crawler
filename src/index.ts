@@ -1,17 +1,21 @@
-import { Browser } from './modules/classes'
+import { Executor } from './modules/classes/Executor'
+import { Task, TaskType } from './modules/types/tasks'
 
 const execute = async () => {
-  const browser = await new Browser().getInstance()
+  const tasks: Task[] = [
+    {
+      type: TaskType.NAVIGATE,
+      url: 'https://www.paodeacucar.com/',
+    },
+    {
+      type: TaskType.SAVE,
+      file: 'result',
+    },
+  ]
 
-  const page = await browser.newPage()
+  const executor = new Executor(tasks)
 
-  await page.goto('https://www.paodeacucar.com/', { waitUntil: 'networkidle0' })
-
-  await browser.close()
-
-  return {
-    ok: true,
-  }
+  await executor.execute()
 }
 
 execute().then(console.log).catch(console.error)

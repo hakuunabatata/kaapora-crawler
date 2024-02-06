@@ -1,15 +1,24 @@
+import { WaitEvent } from '../types/tasks'
 import { TaskExecutor } from './TaskExecutor'
 
 export class ClickTask extends TaskExecutor {
-  public async execute(selector: string, time: number) {
+  constructor(
+    private selector: string,
+    wait?: WaitEvent,
+    isNavigation?: boolean,
+  ) {
+    super(wait, isNavigation)
+  }
+
+  public async execute() {
     await this.page.evaluate((selector) => {
       const element = document.querySelector<HTMLElement>(selector)
 
       if (!element) return
 
       element.click()
-    }, selector)
+    }, this.selector)
 
-    if (time) await this.wait(time)
+    return this.executable
   }
 }
