@@ -1,4 +1,3 @@
-import fs from "fs";
 import puppeteer from "puppeteer";
 
 (async () => {
@@ -7,12 +6,6 @@ import puppeteer from "puppeteer";
     const page = await browser.newPage()
 
     await page.goto('https://www.paodeacucar.com/', { waitUntil: 'networkidle0' })
-
-    const screenshot = await page.screenshot({
-        type: 'jpeg',
-    })
-
-    fs.writeFileSync('./screenshot.jpeg', screenshot)
 
     await browser.close()
 })()
