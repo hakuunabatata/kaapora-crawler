@@ -9,6 +9,7 @@ export abstract class TaskExecutor {
   constructor(
     private wait?: WaitEvent,
     private isNavigation?: boolean,
+    private useBrowser = true,
   ) {}
 
   abstract execute(): Promise<Executable>
@@ -25,7 +26,7 @@ export abstract class TaskExecutor {
 
   public async prepare(executable: Executable) {
     this.#executable = executable
-    this.#page = await executable.getPage()
+    if (this.useBrowser) this.#page = await executable.getPage()
 
     return this
   }
@@ -33,7 +34,7 @@ export abstract class TaskExecutor {
   public async _execute() {
     const executable = await this.execute()
     if (this.wait) await this.waitFor(this.wait)
-    if (this.isNavigation)
+    if (this.useBrowser && this.isNavigation)
       await this.page.waitForNavigation({
         waitUntil:
           this.wait && typeof this.wait !== 'number'

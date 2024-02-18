@@ -18,12 +18,15 @@ export class Executable {
   public addResult = (
     type: FileType,
     key: string,
-    content: string | Buffer,
+    content: string | Buffer | unknown,
   ) => {
     this.results = {
       ...this.results,
-      [`${key}-${this.index}.${type}`]:
-        typeof content === 'string' ? Buffer.from(content) : content,
+      [`${key}-${this.index}.${type}`]: Buffer.isBuffer(content)
+        ? content
+        : Buffer.from(
+            typeof content === 'string' ? content : JSON.stringify(content),
+          ),
     }
 
     return this.results
