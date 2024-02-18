@@ -20,6 +20,26 @@ const envSchema = zod.object({
   BROWSER_VIEWPORT_HEIGHT: zod.coerce.number().default(500),
   BROWSER_VIEWPORT_WIDTH: zod.coerce.number().default(500),
   RESULTS_PATH: zod.string().optional(),
+  ALLOWED_RESPONSES: zod
+    .string()
+    .default('[200,302,301,307]')
+    .transform((status) => {
+      try {
+        return JSON.parse(status) as number[]
+      } catch {
+        return [] as number[]
+      }
+    }),
+  THROWABLE_RESPONSES: zod
+    .string()
+    .default('[400,403,500,502]')
+    .transform((status) => {
+      try {
+        return JSON.parse(status) as number[]
+      } catch {
+        return [] as number[]
+      }
+    }),
 })
 
 export type EnvironmentSchema = zod.infer<typeof envSchema>

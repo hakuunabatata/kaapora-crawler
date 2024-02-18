@@ -1,6 +1,7 @@
 import { Page } from 'puppeteer'
 import { Executable } from '../classes/Executable'
 import { WaitEvent } from '../types/tasks'
+import { Environment } from '../configs'
 
 export abstract class TaskExecutor {
   #page?: Page
@@ -9,7 +10,7 @@ export abstract class TaskExecutor {
   constructor(
     private wait?: WaitEvent,
     private isNavigation?: boolean,
-    private useBrowser = true,
+    public useBrowser = true,
   ) {}
 
   abstract execute(): Promise<Executable>
@@ -51,5 +52,22 @@ export abstract class TaskExecutor {
       )
 
     return this.page.waitForNavigation({ waitUntil })
+  }
+
+  public validateStatus(
+    statusCode: number,
+    message = 'Unknown Error',
+    throwable = false,
+  ) {
+    const { THROWABLE_RESPONSES, ALLOWED_RESPONSES } = Environment
+    if (THROWABLE_RESPONSES.includes(statusCode)) {
+      this.addError(message, throwable)
+      return false
+    }
+    return ALLOWED_RESPONSES.includes(statusCode)
+  }
+
+  public addError(error: string, throwable = false) {
+    this.executable.addError(`${this.constructor.name}: ${error}`, throwable)
   }
 }

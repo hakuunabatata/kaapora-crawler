@@ -1,5 +1,6 @@
 import { Task, TaskType } from '../types/tasks'
 import { ClickTask } from './Click'
+import { FetchTask } from './Fetch'
 import { NavigateTask } from './Navigate'
 import { SaveTask } from './Save'
 
@@ -15,6 +16,15 @@ export const getExecutor = (task: Task) => {
         task.waitUntil,
         task.wait,
         task.isNavigation,
+      )
+    case TaskType.FETCH:
+      return new FetchTask(
+        task.url,
+        task.method,
+        task.headers,
+        task.body,
+        task.wait,
+        task.useBrowser,
       )
     default:
       throw new Error('Invalid Type')

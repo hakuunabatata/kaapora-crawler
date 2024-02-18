@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Method as AxiosMethod } from 'axios'
 import { PuppeteerLifeCycleEvent } from 'puppeteer'
 
 export type FileType = 'html' | 'json' | 'jpeg'
@@ -6,9 +8,13 @@ export enum TaskType {
   CLICK = 'CLICK',
   NAVIGATE = 'NAVIGATE',
   SAVE = 'SAVE',
+  FETCH = 'FETCH',
 }
 
 export type WaitFor = PuppeteerLifeCycleEvent
+export type RequestMethod = AxiosMethod
+export type RequestHeaders = any
+export type RequestBody = any
 export type WaitEvent = WaitFor | number
 
 interface BaseTask {
@@ -39,4 +45,14 @@ interface NavigateTask extends BaseTask {
   waitUntil?: WaitFor
 }
 
-export type Task = ClickTask | ExportBrowserTask | NavigateTask
+interface FetchTask extends BaseTask {
+  type: TaskType.FETCH
+  url: string
+  method?: RequestMethod
+  headers?: RequestHeaders
+  body?: RequestBody
+  useBrowser?: boolean
+  name?: string
+}
+
+export type Task = ClickTask | ExportBrowserTask | NavigateTask | FetchTask

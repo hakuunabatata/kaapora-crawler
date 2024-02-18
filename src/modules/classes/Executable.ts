@@ -8,6 +8,8 @@ export class Executable {
   index = 0
   waitUntil?: WaitFor
   results: Record<string, Buffer> = {}
+  errors: string[] = []
+  warnings: string[] = []
 
   public getPage = async () => {
     if (!this.#browser) this.#browser = new Browser()
@@ -37,5 +39,9 @@ export class Executable {
     this.#page = undefined
     this.#browser = undefined
     return this
+  }
+
+  public addError(error: string, throwable?: boolean) {
+    this[throwable ? 'errors' : 'warnings'].push(error)
   }
 }
