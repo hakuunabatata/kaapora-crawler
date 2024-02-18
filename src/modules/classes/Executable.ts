@@ -1,12 +1,12 @@
 import { Page } from 'puppeteer'
-import { WaitFor } from '../types/tasks'
+import { FileType, WaitFor } from '../types/tasks'
 import { Browser } from './Browser'
 
 export class Executable {
   #page?: Page
   #browser?: Browser
   index = 0
-  waitUntil: WaitFor
+  waitUntil?: WaitFor
   results: Record<string, Buffer> = {}
 
   public getPage = async () => {
@@ -15,12 +15,18 @@ export class Executable {
     return this.#page
   }
 
-  public addResult = (type: 'html' | 'json', key: string, content: string) => {
+  public addResult = (
+    type: FileType,
+    key: string,
+    content: string | Buffer,
+  ) => {
     this.results = {
       ...this.results,
-      [`${key}-${this.index}.${type}`]: Buffer.from(content),
+      [`${key}-${this.index}.${type}`]:
+        typeof content === 'string' ? Buffer.from(content) : content,
     }
-    return this
+
+    return this.results
   }
 
   public closeBrowser = async () => {

@@ -20,8 +20,6 @@ export class Executor {
       await executor._execute()
     }
 
-    console.log(this.exportFiles)
-
     if (this.exportFiles) await this.export()
 
     return this.executable.closeBrowser()
@@ -29,7 +27,6 @@ export class Executor {
 
   private async export() {
     for (const [key, content] of Object.entries(this.executable.results)) {
-      console.log(key)
       if (this.repository) await this.repository.write(content, key)
     }
   }

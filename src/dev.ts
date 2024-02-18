@@ -12,15 +12,16 @@ class LocalRepository implements Repository {
   #read = promisify(readFile)
   #mkdir = promisify(mkdir)
 
+  constructor(private baseFolder: string = RESULTS_PATH) {}
+
   async write(file: Buffer, path: string): Promise<void> {
-    console.log({ file, path, folder: RESULTS_PATH })
-    return this.#mkdir(RESULTS_PATH, { recursive: true }).then(() =>
-      this.#write([RESULTS_PATH, path].join('/'), file),
+    return this.#mkdir(this.baseFolder, { recursive: true }).then(async () =>
+      this.#write([this.baseFolder, path].join('/'), file),
     )
   }
 
   async read<T>(path: string, isJson = false): Promise<T> {
-    return this.#read(path).then(
+    return this.#read([this.baseFolder, path].join('/')).then(
       (file) => (isJson ? file : JSON.parse(file.toString())) as T,
     )
   }

@@ -3,8 +3,8 @@ import { Executable } from '../classes/Executable'
 import { WaitEvent } from '../types/tasks'
 
 export abstract class TaskExecutor {
-  page: Page
-  executable: Executable
+  #page?: Page
+  #executable?: Executable
 
   constructor(
     private wait?: WaitEvent,
@@ -13,16 +13,24 @@ export abstract class TaskExecutor {
 
   abstract execute(): Promise<Executable>
 
+  public get page() {
+    if (!this.#page) throw new Error('Page not found')
+    return this.#page
+  }
+
+  public get executable() {
+    if (!this.#executable) throw new Error('No Executable found')
+    return this.#executable
+  }
+
   public async prepare(executable: Executable) {
-    this.executable = executable
-    this.page = await executable.getPage()
+    this.#executable = executable
+    this.#page = await executable.getPage()
 
     return this
   }
 
   public async _execute() {
-    console.log(this.constructor.name)
-
     const executable = await this.execute()
     if (this.wait) await this.waitFor(this.wait)
     if (this.isNavigation)

@@ -1,5 +1,7 @@
 import { PuppeteerLifeCycleEvent } from 'puppeteer'
 
+export type FileType = 'html' | 'json' | 'jpeg'
+
 export enum TaskType {
   CLICK = 'CLICK',
   NAVIGATE = 'NAVIGATE',

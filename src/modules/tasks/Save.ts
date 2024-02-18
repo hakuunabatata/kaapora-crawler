@@ -14,6 +14,11 @@ export class SaveTask extends TaskExecutor {
   public async execute(): Promise<Executable> {
     const content = await this.page.content()
 
-    return this.executable.addResult('html', this.file, content)
+    const screenshot = await this.page.screenshot()
+
+    this.executable.addResult('jpeg', 'screenshot', screenshot)
+    this.executable.addResult('html', this.file, content)
+
+    return this.executable
   }
 }
